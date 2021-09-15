@@ -1,0 +1,86 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: trips
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: trips
+  template:
+    metadata:
+      labels:
+        app: trips
+    spec:
+      containers:
+      - name: trips
+        image: registryacs2871.azurecr.io/tripinsights-trips:1.0
+        ports:
+        - containerPort: 80
+        resources:
+          requests:
+            cpu: 100m
+            memory: 128Mi
+          limits:
+            cpu: 250m
+            memory: 256Mi
+        # volumeMounts:
+        # - name: sqlpassword
+        #   mountPath: "/secrets/SQL_PASSWORD"
+        #   readOnly: true
+        # - name: sqluser
+        #   mountPath: "/secrets/SQL_USER"
+        #   readOnly: true
+        # - name: sqldb
+        #   mountPath: "/secrets/SQL_DBNAME"
+        #   readOnly: true
+        # - name: sqlserver
+        #   mountPath: "/secrets/SQL_SERVER"
+        #   readOnly: true
+        env:
+          - name: SQL_USER
+            valueFrom:
+              secretKeyRef:
+                name: sqlsecret
+                key: SQL_USER
+          - name: SQL_PASSWORD
+            valueFrom:
+              secretKeyRef:
+                name: sqlsecret
+                key: SQL_PASSWORD
+          - name: SQL_SERVER
+            valueFrom:
+              secretKeyRef:
+                name: sqlsecret
+                key: SQL_SERVER
+          - name: SQL_DBNAME
+            valueFrom:
+              secretKeyRef:
+                name: sqlsecret
+                key: SQL_DBNAME
+          - name: OPENAPI_DOCS_URI
+            value: "http://trips-svc.api.svc.cluster.local:80/"
+          - name: ASPNETCORE_ENVIRONMENT
+            value: Development
+        # - name: SQL_USER
+        #   value: "sqladminaCs2871"
+        # - name: SQL_PASSWORD
+        #   value: "OpenHackTeam5"
+        # - name: SQL_SERVER
+        #   value: "sqlserveracs2871.database.windows.net"
+        # - name: SQL_DBNAME
+        #   value: "mydrivingDB"
+
+      # volumes:
+      # - name: sqlpassword
+      #   secret:
+      #     secretName: sqlpassword
+      # - name: sqluser
+      #   secret:
+      #     secretName: sqluser
+      # - name: sqlserver
+      #   secret:
+      #     secretName: sqlserver
+      # - name: sqldb
+      #   secret:
+      #     secretName: sqldb

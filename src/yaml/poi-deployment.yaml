@@ -1,0 +1,24 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: azure-poi
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: azure-poi
+  template:
+    metadata:
+      labels:
+        app: azure-poi
+    spec:
+      containers:
+      - name: azure-poi
+        image: registryacs2871.azurecr.io/tripinsights-poi:1.0
+        resources:
+          requests:
+            cpu: 100m
+            memory: 128Mi
+          limits:
+            cpu: 250m
+            memory: 256Mi
