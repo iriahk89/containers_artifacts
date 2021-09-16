@@ -24,6 +24,12 @@ spec:
           limits:
             cpu: 250m
             memory: 256Mi
+        volumeMounts:
+        - name: secrets-store-inline
+          mountPath: "/secrets"
+          readOnly: true
+            # nodePublishSecretRef:
+            #   name: SQL_USER  
         # volumeMounts:
         # - name: sqlpassword
         #   mountPath: "/secrets/SQL_PASSWORD"
@@ -41,23 +47,23 @@ spec:
           - name: SQL_USER
             valueFrom:
               secretKeyRef:
-                name: sqlsecret
-                key: SQL_USER
+                name: tripinisghtskv
+                key: SQLUSER
           - name: SQL_PASSWORD
             valueFrom:
               secretKeyRef:
-                name: sqlsecret
-                key: SQL_PASSWORD
+                name: tripinisghtskv
+                key: SQLPASSWORD
           - name: SQL_SERVER
             valueFrom:
               secretKeyRef:
-                name: sqlsecret
-                key: SQL_SERVER
+                name: tripinisghtskv
+                key: SQLSERVER
           - name: SQL_DBNAME
             valueFrom:
               secretKeyRef:
-                name: sqlsecret
-                key: SQL_DBNAME
+                name: tripinisghtskv
+                key: SQLDBNAME
           - name: OPENAPI_DOCS_URI
             value: "http://trips-svc.api.svc.cluster.local:80/"
           - name: ASPNETCORE_ENVIRONMENT
@@ -84,3 +90,11 @@ spec:
       # - name: sqldb
       #   secret:
       #     secretName: sqldb
+
+      volumes:
+        - name: secrets-store-inline
+          csi:
+            driver: secrets-store.csi.k8s.io
+            readOnly: true
+            volumeAttributes:
+              secretProviderClass: tripinisghtskv

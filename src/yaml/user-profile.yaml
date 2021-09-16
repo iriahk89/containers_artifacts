@@ -27,24 +27,35 @@ spec:
           limits:
             cpu: 500m
             memory: 256Mi
+        volumeMounts:
+        - name: secrets-store-inline
+          mountPath: "/secrets"
+          readOnly: true
         env:
           - name: SQL_USER
             valueFrom:
               secretKeyRef:
-                name: sqlsecret
-                key: SQL_USER
+                name: tripinisghtskv
+                key: SQLUSER
           - name: SQL_PASSWORD
             valueFrom:
               secretKeyRef:
-                name: sqlsecret
-                key: SQL_PASSWORD
+                name: tripinisghtskv
+                key: SQLPASSWORD
           - name: SQL_SERVER
             valueFrom:
               secretKeyRef:
-                name: sqlsecret
-                key: SQL_SERVER
+                name: tripinisghtskv
+                key: SQLSERVER
           - name: SQL_DBNAME
             valueFrom:
               secretKeyRef:
-                name: sqlsecret
-                key: SQL_DBNAME
+                name: tripinisghtskv
+                key: SQLDBNAME
+      volumes:
+        - name: secrets-store-inline
+          csi:
+            driver: secrets-store.csi.k8s.io
+            readOnly: true
+            volumeAttributes:
+              secretProviderClass: tripinisghtskv
