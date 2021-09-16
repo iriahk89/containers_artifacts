@@ -1,0 +1,46 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: user-profile
+  labels:
+    app: user-profile
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: user-profile
+  template:
+    metadata:
+      labels:
+        app: user-profile
+    spec:
+      containers:
+      - name: user-profile
+        image: registryacs2871.azurecr.io/tripinsights/userprofile:1.0
+        ports:
+        - containerPort: 80
+          name: user-profile
+        resources:
+          requests:
+            cpu: 250m
+            memory: 64Mi
+          limits:
+            cpu: 500m
+            memory: 256Mi
+        envFrom:
+          - seretRef:
+            name: sqlsecret
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: user-profile
+  labels:
+    run: user-profile
+spec:
+  ports:
+  - port: 80
+    targetPort: 80
+    protocol: TCP
+  selector:
+    app: user-profile
